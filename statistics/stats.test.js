@@ -1,0 +1,8 @@
+const {test}=require('node:test'),a=require('node:assert/strict'),S=require('./stats');
+const near=(v,w,e=1e-7)=>a.ok(Math.abs(v-w)<e,`${v} != ${w}`);
+test('binomial normalization, endpoints and exact two-sided p',()=>{near(S.binomial(20,.5).reduce((s,v)=>s+v,0),1);near(S.binomialTest(20,.5,15,'two').p,.04138946533203125);near(S.binomial(3,0)[0],1);near(S.binomial(3,1)[3],1);});
+test('normal probability and quantiles',()=>{near(S.normalCDF(1.96),.9750021048517795);near(S.quantile(S.normalCDF,.975),1.95996398454);near(S.normalCDF(-8),0);});
+test('t reference values and 95% interval critical values',()=>{near(S.tCDF(1,1),.75);near(S.quantile(x=>S.tCDF(x,9),.975),2.2621571628);near(S.tPDF(0,1),1/Math.PI);});
+test('chi-square contingency table',()=>{const r=S.chiTest([[30,20],[15,35]]);near(r.stat,9.09090909090909);near(r.p,.0025688315270227);a.equal(r.df,1);near(r.expected[0][0],22.5);a.throws(()=>S.chiTest([[0,0],[1,3]]));a.throws(()=>S.chiTest([[1.2,3],[2,3]]));});
+test('t test one sample, paired and Welch',()=>{let r=S.tTest([1,2,3,4,5],[],'one',3);near(r.t,0);near(r.p,1);r=S.tTest([1,2,3,4,5],[2,3,4,5,6],'welch');near(r.t,-1);near(r.df,8);near(r.p,.3465935070873342);r=S.tTest([3,5,8],[1,2,4],'paired');near(r.diff,3);near(r.df,2);a.throws(()=>S.tTest([1,1],[],'one',0));a.throws(()=>S.tTest([1,2],[1,2,3],'paired'));});
+test('seeded simulations reproduce and intervals cover',()=>{const r=S.rng(2026),q=S.rng(2026);for(let i=0;i<100;i++)near(r(),q(),1e-15);const rng=S.rng(42),z=S.quantile(S.normalCDF,.975);let covered=0;for(let j=0;j<1000;j++){const mean=Array.from({length:20},()=>S.randomNormal(rng)).reduce((s,v)=>s+v,0)/20;if(Math.abs(mean)<=z/Math.sqrt(20))covered++;}a.ok(covered>920&&covered<980);});

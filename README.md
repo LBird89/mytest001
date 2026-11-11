@@ -34,3 +34,6 @@
 GitHub Pages は `main` / `/ (root)` から公開します。この変更を main にマージすると、同じサイトで両方を利用できます。各フォルダ内の HTML / JS / CSS は相対パスで読み込み、外部ライブラリやビルドは不要です。ローカルでファイルを直接開く場合、各版は `v1/index.html` または `v2/index.html` を開いてください。
 
 数式テスト: `node math.test.js`、回転の幾何テスト: `node rotation.test.js`。テストは v2 の実装を対象とします。
+
+## 統計ラボ
+別アプリを `/statistics/` に追加しています。6テーマの実験・アニメーションを利用できます。トップページから選択できます。詳しくは [statistics/README.md](statistics/README.md) を参照してください。
